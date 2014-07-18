@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Intro to JavaScript: Calculator Demo</title>
+    <link type="text/css" rel="stylesheet" href="assets/css/main.css"/>
+</head>
+<body>
+    <div id="container">
+        <div id="prev-expression">
+            <span></span>
+        </div>
+        <div id="calculator">
+            <div id="curr-expression">
+                <span></span>
+            </div>
+            <div>
+                <span class="btn" data-value="(">(</span>
+                <span class="btn" data-value=")">)</span>
+                <span class="btn" data-value="ce">CE</span>
+                <span class="btn operator" data-value="/">&divide;</span>
+            </div>
+            <div>
+                <span class="btn" data-value="7">7</span>
+                <span class="btn" data-value="8">8</span>
+                <span class="btn" data-value="9">9</span>
+                <span class="btn operator" data-value="*">x</span>
+            </div>
+            <div>
+                <span class="btn" data-value="4">4</span>
+                <span class="btn" data-value="5">5</span>
+                <span class="btn" data-value="6">6</span>
+                <span class="btn operator" data-value="-">-</span>
+            </div>
+            <div>
+                <span class="btn" data-value="1">1</span>
+                <span class="btn" data-value="2">2</span>
+                <span class="btn" data-value="3">3</span>
+                <span class="btn operator" data-value="+">+</span>
+            </div>
+            <div>
+                <span class="btn" data-value="0">0</span>
+                <span class="btn" data-value=".">.</span>
+                <span class="btn" data-value="=">=</span>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="assets/js/calculator.js"></script>
+    <script type="text/javascript">
+        var calculatorElement = document.getElementById("calculator"),
+            currDisplayElement = document.getElementById("curr-expression").firstElementChild,
+            prevDisplayElement = document.getElementById("prev-expression").firstElementChild,
+            expression = Calculator.newExpression();
+
+        var updatePrevDisplay = function() {
+            var showAnswer = false;
+            return function(expression, isAnswer) {
+                if (isAnswer) {
+                    prevDisplayElement.innerHTML = expression + " =";
+                    showAnswer = true;
+                } else if (showAnswer) {
+                    prevDisplayElement.innerHTML = "Answer: " + expression;
+                    showAnswer = false;
+                }
+            }
+        }();
+
+        var updateCurrDisplay = function(expression) {
+            currDisplayElement.innerHTML = expression;
+        };
+
+        calculatorElement.addEventListener("click", function(e) {
+            if (e.target.classList.contains("btn")) {
+                var value = e.target.getAttribute("data-value");
+                if (value == "=") {
+                    updatePrevDisplay(expression.toString(), true);
+                    updateCurrDisplay(expression.evaluate());
+                } else if (value == "ce") {
+                    expression.reset();
+                    updateCurrDisplay("");
+                } else {
+                    updatePrevDisplay(expression.toString());
+                    expression.addValue(value);
+                    updateCurrDisplay(expression.toString());
+                }
+            }
+        });
+    </script>
+</body>
+</html>
